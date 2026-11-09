@@ -27,7 +27,8 @@ Built on the Buffer API. Not affiliated with or endorsed by Buffer.
 
    ```bash
    pnpm install
-   pnpm dev        # https://localhost:3000 (self-signed cert)
+   pnpm certs      # one-time: self-signed cert in ./certificates (gitignored)
+   pnpm dev        # https://localhost:3000
    ```
 
 Buffer requires HTTPS redirect URIs even on localhost, so `pnpm dev` runs with `--experimental-https`. Accept the browser warning for the local certificate.
