@@ -20,9 +20,25 @@ async function ErrorNotice({ searchParams }: { searchParams: Promise<{ error?: s
   );
 }
 
+const STEPS = [
+  {
+    title: "Snap the special",
+    body: "Take a photo or type a line. Chalk writes the caption in your voice, makes a branded card, and posts or queues it in Buffer.",
+  },
+  {
+    title: "Approve the week",
+    body: "Chalk looks at your menu, the forecast and public holidays, then suggests a week of posts. Swipe yes or no; yeses get scheduled.",
+  },
+  {
+    title: "Tap sold out",
+    body: "Ran out of croissants? One tap pulls every post about them that's still due today, in Chalk and in your Buffer queue.",
+  },
+];
+
 export default function Home(props: PageProps<"/">) {
   return (
-    <main className="mx-auto grid w-full max-w-5xl flex-1 gap-12 px-6 py-12 md:grid-cols-[1.1fr_1fr] md:items-center md:py-20">
+    <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-12 md:py-20">
+      <div className="grid gap-12 md:grid-cols-[1.1fr_1fr] md:items-center">
       <section>
         <p className="mb-6 font-display text-2xl italic text-ink-soft">Chalk</p>
         <Suspense>
@@ -53,9 +69,25 @@ export default function Home(props: PageProps<"/">) {
         <p className="font-display text-sm uppercase tracking-[0.2em] opacity-70">Today</p>
         <p className="mt-4 font-display text-4xl italic">Pumpkin loaf</p>
         <p className="mt-1 text-lg opacity-80">warm, with salted butter</p>
-        <p className="mt-8 font-display text-3xl">$4</p>
+        <p className="mt-8 font-display text-3xl">₹150</p>
         <p className="mt-1 text-sm opacity-70">until 2pm or sold out</p>
       </figure>
+      </div>
+
+      <section aria-labelledby="how" className="mt-20 border-t border-line pt-12 md:mt-28">
+        <h2 id="how" className="font-display text-3xl tracking-tight">
+          Three things, all through Buffer
+        </h2>
+        <ol className="mt-8 grid gap-8 md:grid-cols-3 md:gap-10">
+          {STEPS.map((step, i) => (
+            <li key={step.title}>
+              <p className="font-display text-4xl italic text-accent">{i + 1}</p>
+              <h3 className="mt-2 text-lg font-semibold">{step.title}</h3>
+              <p className="mt-2 text-ink-soft">{step.body}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
     </main>
   );
 }
