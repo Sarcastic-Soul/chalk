@@ -1,4 +1,6 @@
 import { Suspense } from "react";
+import Link from "next/link";
+import { PlusIcon } from "@phosphor-icons/react/dist/ssr";
 import { redirect } from "next/navigation";
 import { BufferApiError } from "@/lib/buffer/client";
 import { getAccount, getChannels, type Channel } from "@/lib/buffer/queries";
@@ -105,6 +107,15 @@ function ChannelList({ orgName, channels }: { orgName: string; channels: Channel
           </li>
         ))}
       </ul>
+
+      {usable.length > 0 && (
+        <Link
+          href="/app/compose"
+          className="mt-8 flex min-h-14 w-full items-center justify-center gap-2 rounded-md bg-accent text-lg font-semibold text-accent-ink transition-colors hover:bg-[#a8441f]"
+        >
+          <PlusIcon size={20} weight="bold" aria-hidden /> New post
+        </Link>
+      )}
 
       {!hasInstagram && (
         <p className="mt-6 text-sm text-ink-soft">
