@@ -59,3 +59,20 @@ src/proxy.ts               refresh the access token when expired, before pages r
 ## Deploy (Vercel)
 
 Set `BUFFER_CLIENT_ID`, `BUFFER_CLIENT_SECRET`, `APP_URL` (your production URL) and a fresh `SESSION_SECRET` in the project settings, then add `<APP_URL>/api/auth/buffer/callback` as a second redirect URI on the same Buffer app client.
+
+## Demo photo credits
+
+The demo café uses photos from Wikimedia Commons. The menu and chalkboard images were made for this project.
+
+| Item | Photo | Author | License |
+| --- | --- | --- | --- |
+| Croissants | [Croissants au beurre](https://commons.wikimedia.org/wiki/File:Croissants_au_beurre_(18953292873).jpg) | Herry Wibisono | CC0 |
+| Cinnamon roll | [Cinnamon-Roll-US-Bakery](https://commons.wikimedia.org/wiki/File:Cinnamon-Roll-US-Bakery.jpg) | Evan-Amos | Public domain |
+| Choc chip cookie | [Choc-Chip-Cookie](https://commons.wikimedia.org/wiki/File:Choc-Chip-Cookie.jpg) | Evan-Amos | Public domain |
+| Banana walnut bread | [Banana bread cut into slices](https://commons.wikimedia.org/wiki/File:Banana_bread_cut_into_slices.jpg) | Shisma | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |
+| Iced cashew latte | [Iced Coffee in Glass](https://commons.wikimedia.org/wiki/File:Iced_Coffee_in_Glass_-_Sunshine_Coffee_-_Laramie_Cafe_(53838344552).jpg) | Tony Webster | [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/) |
+| Pumpkin loaf | [Pumpkin Walnut Bread](https://commons.wikimedia.org/wiki/File:Pumpkin_Walnut_Bread.jpg) | Cphackm | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
+| Cappuccino | Wikimedia Commons | Jazzbobrown | Public domain |
+| Flat white | Wikimedia Commons | Kim Sanso | CC0 |
+
+Chalk crops these photos and adds text to make post cards.
