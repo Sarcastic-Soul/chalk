@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { ConnectButton } from "@/components/connect-button";
 
 const ERRORS: Record<string, string> = {
@@ -38,7 +39,10 @@ export default function Home(props: PageProps<"/">) {
           <ConnectButton />
         </div>
         <p className="mt-4 text-sm text-ink-soft">
-          Built on the Buffer API. Posts go to the channels you&apos;ve connected in Buffer.
+          Built on the Buffer API. Posts go to the channels you&apos;ve connected in Buffer.{" "}
+          <Link href="/privacy" className="underline hover:text-ink">
+            Privacy
+          </Link>
         </p>
       </section>
 
