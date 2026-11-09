@@ -1,127 +1,86 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { PlusIcon } from "@phosphor-icons/react/dist/ssr";
-import { redirect } from "next/navigation";
-import { BufferApiError } from "@/lib/buffer/client";
-import { getAccount, getChannels, type Channel } from "@/lib/buffer/queries";
-import { getSession } from "@/lib/session";
-import { ConnectButton } from "@/components/connect-button";
+import { CalendarDotsIcon, CameraIcon } from "@phosphor-icons/react/dist/ssr";
+import { Notice, btnBoard, btnPrimary } from "@/components/ui";
+import { requireShop } from "@/lib/identity";
+import { listProducts, today, upcomingPosts } from "@/lib/shop";
+import { formatWhen } from "@/lib/time";
+import { PostList, PreviewToggle, SoldOutList } from "./today-view";
 
-export default function AppPage() {
+export default function TodayPage(props: PageProps<"/app">) {
   return (
-    <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-10">
-      <header className="mb-10 flex items-center justify-between">
-        <p className="font-display text-2xl italic">Chalk</p>
-        <form action="/api/auth/logout" method="post">
-          <button
-            type="submit"
-            className="min-h-11 rounded-md px-3 text-sm text-ink-soft underline-offset-4 hover:underline"
-          >
-            Disconnect
-          </button>
-        </form>
-      </header>
-      <Suspense fallback={<p className="text-ink-soft">Loading your Buffer channels…</p>}>
-        <Workspace />
-      </Suspense>
-    </main>
+    <Suspense fallback={<p className="text-ink-soft">Loading today…</p>}>
+      <Today searchParams={props.searchParams} />
+    </Suspense>
   );
 }
 
-type WorkspaceData =
-  | { kind: "ok"; orgName: string; channels: Channel[] }
-  | { kind: "no-org" }
-  | { kind: "expired" }
-  | { kind: "error"; message: string };
-
-async function loadWorkspace(accessToken: string): Promise<WorkspaceData> {
-  try {
-    const account = await getAccount(accessToken);
-    const org = account.organizations[0];
-    if (!org) return { kind: "no-org" };
-    const channels = await getChannels(accessToken, org.id);
-    return { kind: "ok", orgName: org.name, channels };
-  } catch (err) {
-    if (err instanceof BufferApiError && err.isUnauthorized) return { kind: "expired" };
-    const message =
-      err instanceof BufferApiError && err.isRateLimited
-        ? `Buffer is busy right now${err.retryAfter ? `. Try again in ${Math.ceil(err.retryAfter / 60)} min` : ""}.`
-        : "We couldn't reach Buffer. Please refresh in a moment.";
-    return { kind: "error", message };
-  }
-}
-
-async function Workspace() {
-  const session = await getSession();
-  if (!session) redirect("/");
-
-  const data = await loadWorkspace(session.accessToken);
-
-  switch (data.kind) {
-    case "ok":
-      return <ChannelList orgName={data.orgName} channels={data.channels} />;
-    case "no-org":
-      return <p>Your Buffer account has no organization yet. Open Buffer once, then come back.</p>;
-    case "expired":
-      return (
-        <div>
-          <p className="mb-6">Your Buffer connection has expired.</p>
-          <ConnectButton label="Reconnect Buffer" />
-        </div>
-      );
-    case "error":
-      return (
-        <p role="alert" className="rounded-md border border-accent/40 bg-accent/10 px-4 py-3">
-          {data.message}
-        </p>
-      );
-  }
-}
-
-function ChannelList({ orgName, channels }: { orgName: string; channels: Channel[] }) {
-  const usable = channels.filter((c) => !c.isDisconnected && !c.isLocked);
-  const hasInstagram = usable.some((c) => c.service === "instagram");
+async function Today({ searchParams }: { searchParams: PageProps<"/app">["searchParams"] }) {
+  const { shop } = await requireShop();
+  const { demo } = await searchParams;
+  const [items, upcoming] = await Promise.all([listProducts(shop.id), upcomingPosts(shop.id, new Date())]);
+  const date = today(shop);
+  const hasChannel = shop.channels.some((c) => c.usable);
+  const dayName = new Intl.DateTimeFormat("en-IN", { timeZone: shop.timezone, weekday: "long", day: "numeric", month: "long" }).format(new Date());
 
   return (
-    <section>
-      <h1 className="font-display text-4xl tracking-tight">{orgName}</h1>
-      <p className="mt-2 text-ink-soft">
-        {usable.length === 0
-          ? "No channels connected in Buffer yet."
-          : `${usable.length} channel${usable.length === 1 ? "" : "s"} ready to post.`}
-      </p>
+    <div className="space-y-10">
+      <header>
+        <p className="mb-1 text-sm uppercase tracking-[0.18em] text-ink-soft">{dayName}</p>
+        <h1 className="font-display text-4xl leading-tight tracking-tight">{shop.name}</h1>
+      </header>
 
-      <ul className="mt-8 divide-y divide-line border-y border-line">
-        {channels.map((c) => (
-          <li key={c.id} className="flex items-center gap-4 py-4">
-            {/* Remote avatar from the social network; size is fixed and small. */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={c.avatar} alt="" width={40} height={40} className="size-10 rounded-full bg-paper-deep" />
-            <div className="min-w-0 flex-1">
-              <p className="truncate font-semibold">{c.displayName ?? c.name}</p>
-              <p className="text-sm capitalize text-ink-soft">{c.service}</p>
-            </div>
-            {c.isDisconnected || c.isLocked ? (
-              <span className="text-sm text-accent">{c.isLocked ? "Locked" : "Reconnect in Buffer"}</span>
-            ) : null}
-          </li>
-        ))}
-      </ul>
+      {demo && (
+        <Notice tone="ok">
+          Demo café loaded. Preview mode is on, so everything lands in Buffer as a draft. Try Snap first.
+        </Notice>
+      )}
+      {!hasChannel && (
+        <Notice tone="error">
+          No channels connected in Buffer. Connect an Instagram professional account in Buffer, then refresh channels
+          in settings.
+        </Notice>
+      )}
 
-      {usable.length > 0 && (
-        <Link
-          href="/app/compose"
-          className="mt-8 flex min-h-14 w-full items-center justify-center gap-2 rounded-md bg-accent text-lg font-semibold text-accent-ink transition-colors hover:bg-[#a8441f]"
-        >
-          <PlusIcon size={20} weight="bold" aria-hidden /> New post
+      <div className="grid gap-3">
+        <Link href="/app/snap" className={btnPrimary}>
+          <CameraIcon size={22} aria-hidden /> Snap today&rsquo;s special
         </Link>
-      )}
+        <Link href="/app/plan" className={btnBoard}>
+          <CalendarDotsIcon size={22} aria-hidden /> Plan the week
+        </Link>
+      </div>
 
-      {!hasInstagram && (
-        <p className="mt-6 text-sm text-ink-soft">
-          Tip: connect an Instagram professional account in Buffer to post specials.
+      <PreviewToggle on={shop.previewMode} />
+
+      <section>
+        <h2 className="mb-1 font-display text-2xl">Sold out?</h2>
+        <p className="mb-4 text-sm text-ink-soft">
+          Tap an item and Chalk pulls any post about it that&rsquo;s still due today, from Chalk and from your Buffer
+          queue.
         </p>
-      )}
-    </section>
+        <SoldOutList items={items.map((p) => ({ id: p.id, name: p.name, price: p.price, soldOut: p.soldOutOn === date }))} />
+      </section>
+
+      <section>
+        <h2 className="mb-4 font-display text-2xl">Coming up</h2>
+        {upcoming.length === 0 ? (
+          <p className="text-ink-soft">Nothing scheduled yet. Snap a special or plan the week.</p>
+        ) : (
+          <PostList
+            posts={upcoming.map((p) => ({
+              id: p.id,
+              when: p.dueAt ? formatWhen(p.dueAt, shop.timezone) : "",
+              headline: p.headline,
+              status: p.status,
+              imageUrl: p.imageUrl ?? "",
+              error: p.error,
+              reason: p.reason,
+              canPull: ["scheduled", "draft", "approved"].includes(p.status) && !!p.dueAt && p.dueAt > new Date(),
+            }))}
+          />
+        )}
+      </section>
+    </div>
   );
 }

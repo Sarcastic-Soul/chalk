@@ -59,3 +59,34 @@ export function feedImageUrl(publicId: string): string {
   if (!isValidPublicId(publicId)) throw new Error("Invalid image id");
   return `https://res.cloudinary.com/${config().CLOUDINARY_CLOUD_NAME}/image/upload/${FEED_TRANSFORM}/${publicId}.jpg`;
 }
+
+/** Smaller copy for previews and for sending to Gemini. */
+export function previewImageUrl(publicId: string, width = 800): string {
+  if (!isValidPublicId(publicId)) throw new Error("Invalid image id");
+  return `https://res.cloudinary.com/${config().CLOUDINARY_CLOUD_NAME}/image/upload/c_limit,w_${width},f_jpg,q_auto/${publicId}.jpg`;
+}
+
+/** 4:5 photo for the card renderer to place behind the brand band. */
+export function cardPhotoUrl(publicId: string): string {
+  if (!isValidPublicId(publicId)) throw new Error("Invalid image id");
+  return `https://res.cloudinary.com/${config().CLOUDINARY_CLOUD_NAME}/image/upload/c_fill,g_auto,w_1080,h_1010,f_jpg,q_auto/${publicId}.jpg`;
+}
+
+/** Server-side upload of a rendered card. Returns a JPEG URL Buffer can fetch. */
+export async function uploadCard(png: Buffer): Promise<string> {
+  const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } = config();
+  cloudinary.config({
+    cloud_name: CLOUDINARY_CLOUD_NAME,
+    api_key: CLOUDINARY_API_KEY,
+    api_secret: CLOUDINARY_API_SECRET,
+    secure: true,
+  });
+  const result = await new Promise<{ public_id: string; version: number }>((resolve, reject) => {
+    cloudinary.uploader
+      .upload_stream({ folder: "chalk/cards", resource_type: "image" }, (err, res) =>
+        err || !res ? reject(err ?? new Error("Card upload failed")) : resolve(res),
+      )
+      .end(png);
+  });
+  return `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_jpg,q_auto/v${result.version}/${result.public_id}.jpg`;
+}

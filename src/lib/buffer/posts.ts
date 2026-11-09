@@ -22,9 +22,8 @@ export type CreatedPost = {
   dueAt: string | null;
 };
 
-export type CreatePostResult =
-  | { ok: true; post: CreatedPost }
-  | { ok: false; kind: string; message: string };
+export type MutationResult<T> = { ok: true; value: T } | { ok: false; kind: string; message: string };
+export type CreatePostResult = MutationResult<CreatedPost>;
 
 const CREATE_POST = /* GraphQL */ `
   mutation CreatePost($input: CreatePostInput!) {
@@ -39,6 +38,36 @@ const CREATE_POST = /* GraphQL */ `
       }
       ... on MutationError {
         message
+      }
+    }
+  }
+`;
+
+const DELETE_POST = /* GraphQL */ `
+  mutation DeletePost($input: DeletePostInput!) {
+    deletePost(input: $input) {
+      __typename
+      ... on DeletePostSuccess {
+        id
+      }
+      ... on VoidMutationError {
+        message
+      }
+    }
+  }
+`;
+
+const SCHEDULED_POSTS = /* GraphQL */ `
+  query ScheduledPosts($input: PostsInput!) {
+    posts(input: $input, first: 50) {
+      edges {
+        node {
+          id
+          text
+          dueAt
+          channelId
+          status
+        }
       }
     }
   }
@@ -87,6 +116,69 @@ export async function createPost(accessToken: string, draft: PostDraft): Promise
     input: buildCreatePostInput(draft),
   });
   const payload = data.createPost;
-  if ("post" in payload) return { ok: true, post: payload.post };
+  if ("post" in payload) return { ok: true, value: payload.post };
   return { ok: false, kind: payload.__typename, message: payload.message };
+}
+
+/** Deleting a post that's already gone counts as success. */
+export async function deletePost(accessToken: string, id: string): Promise<MutationResult<string>> {
+  const data = await bufferGraphQL<{
+    deletePost: { __typename: string; id?: string; message?: string };
+  }>(accessToken, DELETE_POST, { input: { id } });
+  const p = data.deletePost;
+  if (p.__typename === "DeletePostSuccess") return { ok: true, value: id };
+  if (/not found/i.test(p.message ?? "")) return { ok: true, value: id };
+  return { ok: false, kind: p.__typename, message: p.message ?? "Buffer couldn't remove the post." };
+}
+
+export type QueuedPost = { id: string; text: string; dueAt: string | null; channelId: string };
+
+/** Scheduled posts in Buffer between two instants, for the given channels. */
+export async function scheduledPosts(
+  accessToken: string,
+  organizationId: string,
+  channelIds: string[],
+  start: Date,
+  end: Date,
+): Promise<QueuedPost[]> {
+  const data = await bufferGraphQL<{ posts: { edges: { node: QueuedPost & { status: string } }[] } }>(
+    accessToken,
+    SCHEDULED_POSTS,
+    {
+      input: {
+        organizationId,
+        filter: {
+          channelIds,
+          status: ["scheduled"],
+          startDate: start.toISOString(),
+          endDate: end.toISOString(),
+        },
+      },
+    },
+  );
+  return data.posts.edges
+    .map((e) => e.node)
+    .filter((p) => p.status === "scheduled" && p.dueAt && new Date(p.dueAt) >= start && new Date(p.dueAt) < end);
+}
+
+/** True if a post's text is about the product (whole-word, case-insensitive). */
+export function mentions(text: string, productName: string): boolean {
+  const name = productName.trim().toLowerCase();
+  if (!name) return false;
+  const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+");
+  return new RegExp(`(^|[^\\p{L}\\p{N}])${escaped}($|[^\\p{L}\\p{N}])`, "iu").test(text);
+}
+
+/** Friendly wording for Buffer's typed mutation errors. */
+export function explainError(kind: string, message: string): string {
+  switch (kind) {
+    case "LimitReachedError":
+      return `Buffer's queue is full for this channel (${message}). Free plans hold 10 scheduled posts. Chalk keeps this one and you can push it later.`;
+    case "UnauthorizedError":
+      return "Buffer says this account can't post to that channel. Check the channel in Buffer.";
+    case "InvalidInputError":
+      return `Buffer rejected the post: ${message}`;
+    default:
+      return `Buffer said: ${message}`;
+  }
 }

@@ -28,7 +28,8 @@ export async function proxy(request: NextRequest) {
   try {
     const fresh = await refreshSession(session.refreshToken);
     // Keep the old refresh token only if Buffer did not send a new one.
-    const next = { ...fresh, refreshToken: fresh.refreshToken ?? session.refreshToken };
+    // Keep the saved account/org ids too.
+    const next = { ...session, ...fresh, refreshToken: fresh.refreshToken ?? session.refreshToken };
     const sealed = await sealSession(next);
 
     // Forward the new cookie to this request and persist it in the browser.

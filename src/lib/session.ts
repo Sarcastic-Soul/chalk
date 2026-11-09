@@ -15,6 +15,9 @@ export type Session = {
   refreshToken?: string;
   /** Unix ms when the access token expires. */
   expiresAt: number;
+  /** Buffer account and organization, saved at login so pages don't refetch them. */
+  accountId?: string;
+  orgId?: string;
 };
 
 type OAuthState = { state: string; verifier: string };

@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { exchangeCode, OAuthError } from "@/lib/buffer/oauth";
+import { getAccount } from "@/lib/buffer/queries";
 import { env } from "@/lib/env";
 import { setSession, takeOAuthState } from "@/lib/session";
 
@@ -27,7 +28,9 @@ export async function GET(request: NextRequest) {
 
   try {
     const session = await exchangeCode(code, saved.verifier);
-    await setSession(session);
+    // One account query at login, so later pages don't spend rate limit on it.
+    const account = await getAccount(session.accessToken);
+    await setSession({ ...session, accountId: account.id, orgId: account.organizations[0]?.id });
   } catch (err) {
     console.error("Buffer token exchange failed", err instanceof OAuthError ? err.code : err);
     return home("token");

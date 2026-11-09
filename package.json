@@ -9,7 +9,9 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "certs": "mkdir -p certificates && openssl req -x509 -newkey rsa:2048 -nodes -days 30 -keyout certificates/localhost-key.pem -out certificates/localhost.pem -subj /CN=localhost -addext subjectAltName=DNS:localhost,IP:127.0.0.1"
+    "certs": "mkdir -p certificates && openssl req -x509 -newkey rsa:2048 -nodes -days 30 -keyout certificates/localhost-key.pem -out certificates/localhost.pem -subj /CN=localhost -addext subjectAltName=DNS:localhost,IP:127.0.0.1",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "node --env-file=.env scripts/migrate.mjs"
   },
   "dependencies": {
     "@neondatabase/serverless": "1.2.0",
