@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { ImageIcon, PencilSimpleIcon, PlusIcon, SpinnerGapIcon, TrashIcon } from "@phosphor-icons/react";
 import { PhotoPicker } from "@/components/photo-picker";
+import { Bone, Loading } from "@/components/skeleton";
 import { btnPrimary, btnSecondary, field, label, Notice } from "@/components/ui";
 import { deleteProduct, importMenu, saveProduct, type ImportState } from "./actions";
 
@@ -78,7 +79,23 @@ export function MenuEditor({ products, welcome }: { products: MenuItem[]; welcom
 
         {editing === "new" && <ItemForm item={{ ...EMPTY, photoPreview: "" }} onDone={() => setEditing(null)} />}
 
-        {products.length === 0 && editing !== "new" && (
+        {importing && (
+          <Loading label="Reading the menu" className="mt-4">
+            <ul className="divide-y divide-line border-y border-line">
+              {[0, 1, 2, 3].map((i) => (
+                <li key={i} className="flex items-center gap-3 py-3">
+                  <Bone className="size-12 shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <Bone className="h-4 w-2/5" />
+                    <Bone className="h-3 w-1/5" />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </Loading>
+        )}
+
+        {products.length === 0 && editing !== "new" && !importing && (
           <p className="text-ink-soft">Nothing yet. Read a menu photo above or add items by hand.</p>
         )}
 

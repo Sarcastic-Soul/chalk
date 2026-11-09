@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { SnapSkeleton } from "@/components/skeleton";
 import { PageHeader } from "@/components/ui";
 import { requireShop } from "@/lib/identity";
 import { parseHours, usableChannels } from "@/lib/shop";
@@ -7,7 +8,7 @@ import { SnapFlow } from "./snap-flow";
 
 export default function SnapPage() {
   return (
-    <Suspense fallback={<p className="text-ink-soft">Loading…</p>}>
+    <Suspense fallback={<SnapSkeleton />}>
       <Snap />
     </Suspense>
   );

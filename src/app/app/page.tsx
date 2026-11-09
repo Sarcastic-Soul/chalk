@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { CalendarDotsIcon, CameraIcon } from "@phosphor-icons/react/dist/ssr";
+import { TodaySkeleton } from "@/components/skeleton";
 import { Notice, btnBoard, btnPrimary } from "@/components/ui";
 import { requireShop } from "@/lib/identity";
 import { listProducts, today, upcomingPosts } from "@/lib/shop";
@@ -9,7 +10,7 @@ import { PostList, PreviewToggle, SoldOutList } from "./today-view";
 
 export default function TodayPage(props: PageProps<"/app">) {
   return (
-    <Suspense fallback={<p className="text-ink-soft">Loading today…</p>}>
+    <Suspense fallback={<TodaySkeleton />}>
       <Today searchParams={props.searchParams} />
     </Suspense>
   );

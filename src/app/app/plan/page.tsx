@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { and, asc, eq, gte } from "drizzle-orm";
+import { PlanPageSkeleton } from "@/components/skeleton";
 import { PageHeader } from "@/components/ui";
 import { db, posts } from "@/lib/db";
 import { requireShop } from "@/lib/identity";
@@ -8,7 +9,7 @@ import { SwipeDeck } from "./swipe-deck";
 
 export default function PlanPage() {
   return (
-    <Suspense fallback={<p className="text-ink-soft">Loading your week…</p>}>
+    <Suspense fallback={<PlanPageSkeleton />}>
       <Plan />
     </Suspense>
   );

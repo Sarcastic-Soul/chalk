@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { SetupSkeleton } from "@/components/skeleton";
 import { PageHeader } from "@/components/ui";
 import { getShop, requireIdentity } from "@/lib/identity";
 import { fetchChannels, parseHours } from "@/lib/shop";
@@ -7,7 +8,7 @@ import { SetupForm } from "./setup-form";
 
 export default function SetupPage() {
   return (
-    <Suspense fallback={<p className="text-ink-soft">Loading…</p>}>
+    <Suspense fallback={<SetupSkeleton />}>
       <Setup />
     </Suspense>
   );

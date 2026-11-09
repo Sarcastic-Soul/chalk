@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { MenuSkeleton } from "@/components/skeleton";
 import { PageHeader } from "@/components/ui";
 import { requireShop } from "@/lib/identity";
 import { isValidPublicId, previewImageUrl } from "@/lib/media/cloudinary";
@@ -7,7 +8,7 @@ import { MenuEditor } from "./menu-editor";
 
 export default function MenuPage(props: PageProps<"/app/menu">) {
   return (
-    <Suspense fallback={<p className="text-ink-soft">Loading your menu…</p>}>
+    <Suspense fallback={<MenuSkeleton />}>
       <Menu searchParams={props.searchParams} />
     </Suspense>
   );

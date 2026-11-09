@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { ArrowCounterClockwiseIcon, PaperPlaneTiltIcon, SparkleIcon, SpinnerGapIcon } from "@phosphor-icons/react";
 import { PhotoPicker } from "@/components/photo-picker";
+import { DraftSkeleton } from "@/components/skeleton";
 import { btnPrimary, btnSecondary, field, label, Notice } from "@/components/ui";
 import { draftSpecial, sendSpecial, type SendResult, type SnapDraft } from "./actions";
 
@@ -68,6 +69,8 @@ export function SnapFlow({
       </div>
     );
   }
+
+  if (drafting) return <DraftSkeleton />;
 
   if (draft) {
     return (

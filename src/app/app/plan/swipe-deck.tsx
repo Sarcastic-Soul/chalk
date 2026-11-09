@@ -2,6 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import { CheckIcon, PencilSimpleIcon, SparkleIcon, SpinnerGapIcon, XIcon } from "@phosphor-icons/react";
+import { PlanSkeleton } from "@/components/skeleton";
 import { btnPrimary, btnSecondary, field, Notice } from "@/components/ui";
 import { decide, generatePlan } from "./actions";
 
@@ -30,6 +31,15 @@ export function SwipeDeck({ ideas, previewMode }: { ideas: Idea[]; previewMode: 
   const [dragging, setDragging] = useState(false);
 
   const idea = ideas[index];
+
+  if (planning) {
+    return (
+      <PlanSkeleton
+        label="Planning your week. This takes about fifteen seconds."
+        note="Checking the forecast and holidays, matching your menu, writing captions, making images…"
+      />
+    );
+  }
 
   function plan() {
     startPlan(async () => {
