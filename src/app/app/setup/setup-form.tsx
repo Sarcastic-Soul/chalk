@@ -34,9 +34,9 @@ export function SetupForm({
   const [color, setColor] = useState(defaults.brandColor);
 
   return (
-    <div className="space-y-10">
+    <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start lg:gap-14">
       {isNew && (
-        <form action={demoAction} className="rounded-md border border-line bg-paper-deep p-5">
+        <form action={demoAction} className="rounded-md border border-line bg-paper-deep p-5 lg:sticky lg:top-12 lg:order-2">
           <p className="font-semibold">Just looking around?</p>
           <p className="mt-1 text-sm text-ink-soft">
             Load Frozen Cashew, a demo café in Bengaluru with a full menu and photos. Posts stay as Buffer
@@ -50,7 +50,7 @@ export function SetupForm({
         </form>
       )}
 
-      <form action={action} className="space-y-7">
+      <form action={action} className="max-w-xl space-y-7">
         <div>
           <label htmlFor="name" className={label}>Shop name</label>
           <input id="name" name="name" required defaultValue={defaults.name} className={field} autoComplete="organization" />

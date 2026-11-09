@@ -62,7 +62,7 @@ export const captionSchema = z.object({
 
 const SERVICE_RULES: Record<string, string> = {
   instagram:
-    "Instagram: 2-4 short lines, one or two fitting emoji at most, then a blank line and 3-6 local and food hashtags. Under 600 characters. Links don't work in captions, so say 'drop by' not 'click'.",
+    "Instagram: 2-4 short lines, one or two fitting emoji at most, then a blank line and 3-6 hashtags (shop name, city, food). Never name a street or neighbourhood that wasn't given. Under 600 characters. Links don't work in captions, so say 'drop by' not 'click'.",
   threads: "Threads: one or two casual sentences, no hashtags or at most one, under 300 characters.",
   twitter: "X: one punchy sentence, at most one hashtag, under 260 characters.",
   facebook: "Facebook: two or three friendly sentences, no hashtag blocks.",

@@ -39,8 +39,8 @@ export function MenuEditor({ products, welcome }: { products: MenuItem[]; welcom
   }
 
   return (
-    <div className="space-y-10">
-      <section className="space-y-4">
+    <div className="grid gap-10 lg:grid-cols-[minmax(0,380px)_1fr] lg:items-start lg:gap-14">
+      <section className="space-y-4 lg:sticky lg:top-12">
         <PhotoPicker
           label="Menu photo"
           hint="Tap to snap your menu or price board"
@@ -85,7 +85,7 @@ export function MenuEditor({ products, welcome }: { products: MenuItem[]; welcom
         {[...groups].map(([category, items]) => (
           <div key={category} className="mt-6">
             <h3 className="mb-1 text-sm uppercase tracking-[0.18em] text-ink-soft">{category}</h3>
-            <ul className="divide-y divide-line border-y border-line">
+            <ul className="divide-y divide-line border-y border-line xl:grid xl:grid-cols-2 xl:gap-x-8 xl:divide-y-0 xl:border-b-0 xl:[&>li]:border-b xl:[&>li]:border-line">
               {items.map((p) =>
                 editing === p.id ? (
                   <li key={p.id} className="py-4">
@@ -127,7 +127,7 @@ export function MenuEditor({ products, welcome }: { products: MenuItem[]; welcom
       </section>
 
       {(welcome || products.length > 0) && (
-        <Link href="/app" className={btnPrimary}>
+        <Link href="/app" className={`${btnPrimary} lg:col-start-2 lg:max-w-sm`}>
           {welcome ? "Done, show me today" : "Back to today"}
         </Link>
       )}

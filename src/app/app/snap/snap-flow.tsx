@@ -45,7 +45,8 @@ export function SnapFlow({
       ? new Date(sent.dueAt).toLocaleString(undefined, { weekday: "short", hour: "numeric", minute: "2-digit" })
       : "";
     return (
-      <div className="space-y-6">
+      <div className="grid gap-6 lg:grid-cols-2 lg:items-start lg:gap-12">
+        <div className="space-y-6 lg:order-2">
         <Notice tone="ok">
           {sent.preview
             ? "Saved as a draft in Buffer. Nothing was published. Turn preview off in settings to post for real."
@@ -53,34 +54,36 @@ export function SnapFlow({
               ? "Sent to Buffer. It goes out in a moment."
               : `Scheduled in Buffer for ${whenText}.`}
         </Notice>
-        {draft && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={draft.imageUrl} alt={draft.altText} className="w-full rounded-md" />
-        )}
         <button type="button" className={btnPrimary} onClick={reset}>
           <ArrowCounterClockwiseIcon size={20} aria-hidden /> Snap another
         </button>
         <Link href="/app" className={`${btnSecondary} w-full`}>
           Back to today
         </Link>
+        </div>
+        {draft && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={draft.imageUrl} alt={draft.altText} className="w-full rounded-md lg:order-1" />
+        )}
       </div>
     );
   }
 
   if (draft) {
     return (
-      <div className="space-y-6">
+      <div className="grid gap-6 lg:grid-cols-2 lg:items-start lg:gap-12">
         {/* Rendered card on Cloudinary: exactly what Buffer will publish. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={draft.imageUrl} alt={draft.altText} className="w-full rounded-md shadow-sm" />
+        <img src={draft.imageUrl} alt={draft.altText} className="w-full rounded-md shadow-sm lg:sticky lg:top-12" />
 
+        <div className="space-y-6">
         <div>
           <label htmlFor="caption" className={label}>
             Caption for {draft.channelName} <span className="font-normal capitalize text-ink-soft">· {draft.service}</span>
           </label>
           <textarea
             id="caption"
-            rows={7}
+            rows={9}
             value={caption}
             onChange={(e) => setCaption(e.target.value)}
             className={`${field} py-3`}
@@ -135,18 +138,20 @@ export function SnapFlow({
         <button type="button" className={`${btnSecondary} w-full`} onClick={reset} disabled={sending}>
           Start over
         </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="grid gap-6 lg:grid-cols-2 lg:items-start lg:gap-12">
       <PhotoPicker
         label="Photo of the special"
         hint="Tap to snap the dish or your chalkboard"
         onReady={setPublicId}
         onClear={() => setPublicId("")}
       />
+      <div className="space-y-6 lg:pt-8">
       <div>
         <label htmlFor="note" className={label}>
           Anything to add? <span className="font-normal text-ink-soft">(optional)</span>
@@ -191,6 +196,7 @@ export function SnapFlow({
         {drafting ? <SpinnerGapIcon size={20} className="animate-spin" aria-hidden /> : <SparkleIcon size={20} aria-hidden />}
         {drafting ? "Writing your post…" : "Make the post"}
       </button>
+      </div>
     </div>
   );
 }

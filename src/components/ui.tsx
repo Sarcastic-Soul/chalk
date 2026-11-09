@@ -29,10 +29,10 @@ export function Notice({ tone, children }: { tone: "error" | "ok" | "info"; chil
 
 export function PageHeader({ eyebrow, title, children }: { eyebrow?: string; title: string; children?: ReactNode }) {
   return (
-    <header className="mb-8">
+    <header className="mb-8 lg:mb-12">
       {eyebrow && <p className="mb-1 text-sm uppercase tracking-[0.18em] text-ink-soft">{eyebrow}</p>}
-      <h1 className="font-display text-4xl leading-tight tracking-tight">{title}</h1>
-      {children && <div className="mt-2 text-ink-soft">{children}</div>}
+      <h1 className="font-display text-4xl leading-tight tracking-tight lg:text-5xl">{title}</h1>
+      {children && <div className="mt-2 max-w-2xl text-ink-soft lg:text-lg">{children}</div>}
     </header>
   );
 }

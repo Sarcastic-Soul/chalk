@@ -10,7 +10,7 @@ export function AccountTools({ channels }: { channels: { id: string; name: strin
   const [error, setError] = useState("");
 
   return (
-    <section className="mt-12 space-y-4 border-t border-line pt-8">
+    <section className="mt-12 max-w-xl space-y-4 border-t border-line pt-8">
       <h2 className="font-display text-2xl">Buffer channels</h2>
       <ul className="space-y-1 text-sm">
         {channels.map((c) => (

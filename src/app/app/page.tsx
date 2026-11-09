@@ -27,7 +27,7 @@ async function Today({ searchParams }: { searchParams: PageProps<"/app">["search
     <div className="space-y-10">
       <header>
         <p className="mb-1 text-sm uppercase tracking-[0.18em] text-ink-soft">{dayName}</p>
-        <h1 className="font-display text-4xl leading-tight tracking-tight">{shop.name}</h1>
+        <h1 className="font-display text-4xl leading-tight tracking-tight lg:text-5xl">{shop.name}</h1>
       </header>
 
       {demo && (
@@ -42,45 +42,56 @@ async function Today({ searchParams }: { searchParams: PageProps<"/app">["search
         </Notice>
       )}
 
-      <div className="grid gap-3">
-        <Link href="/app/snap" className={btnPrimary}>
-          <CameraIcon size={22} aria-hidden /> Snap today&rsquo;s special
-        </Link>
-        <Link href="/app/plan" className={btnBoard}>
-          <CalendarDotsIcon size={22} aria-hidden /> Plan the week
-        </Link>
+      <div className="grid gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:items-start lg:gap-14">
+        <div className="contents lg:block lg:space-y-10">
+          <div className="order-1 grid gap-3 sm:grid-cols-2">
+            <Link href="/app/snap" className={btnPrimary}>
+              <CameraIcon size={22} aria-hidden /> Snap today&rsquo;s special
+            </Link>
+            <Link href="/app/plan" className={btnBoard}>
+              <CalendarDotsIcon size={22} aria-hidden /> Plan the week
+            </Link>
+          </div>
+
+          <div className="order-2 lg:hidden">
+            <PreviewToggle on={shop.previewMode} />
+          </div>
+
+          <section className="order-4">
+            <h2 className="mb-4 font-display text-2xl">Coming up</h2>
+            {upcoming.length === 0 ? (
+              <p className="text-ink-soft">Nothing scheduled yet. Snap a special or plan the week.</p>
+            ) : (
+              <PostList
+                posts={upcoming.map((p) => ({
+                  id: p.id,
+                  when: p.dueAt ? formatWhen(p.dueAt, shop.timezone) : "",
+                  headline: p.headline,
+                  status: p.status,
+                  imageUrl: p.imageUrl ?? "",
+                  error: p.error,
+                  reason: p.reason,
+                  canPull: ["scheduled", "draft", "approved"].includes(p.status) && !!p.dueAt && p.dueAt > new Date(),
+                }))}
+              />
+            )}
+          </section>
+        </div>
+
+        <div className="contents lg:sticky lg:top-12 lg:block lg:space-y-10">
+          <div className="hidden lg:block">
+            <PreviewToggle on={shop.previewMode} />
+          </div>
+          <section className="order-3">
+            <h2 className="mb-1 font-display text-2xl">Sold out?</h2>
+            <p className="mb-4 text-sm text-ink-soft">
+              Tap an item and Chalk pulls any post about it that&rsquo;s still due today, from Chalk and from your
+              Buffer queue.
+            </p>
+            <SoldOutList items={items.map((p) => ({ id: p.id, name: p.name, price: p.price, soldOut: p.soldOutOn === date }))} />
+          </section>
+        </div>
       </div>
-
-      <PreviewToggle on={shop.previewMode} />
-
-      <section>
-        <h2 className="mb-1 font-display text-2xl">Sold out?</h2>
-        <p className="mb-4 text-sm text-ink-soft">
-          Tap an item and Chalk pulls any post about it that&rsquo;s still due today, from Chalk and from your Buffer
-          queue.
-        </p>
-        <SoldOutList items={items.map((p) => ({ id: p.id, name: p.name, price: p.price, soldOut: p.soldOutOn === date }))} />
-      </section>
-
-      <section>
-        <h2 className="mb-4 font-display text-2xl">Coming up</h2>
-        {upcoming.length === 0 ? (
-          <p className="text-ink-soft">Nothing scheduled yet. Snap a special or plan the week.</p>
-        ) : (
-          <PostList
-            posts={upcoming.map((p) => ({
-              id: p.id,
-              when: p.dueAt ? formatWhen(p.dueAt, shop.timezone) : "",
-              headline: p.headline,
-              status: p.status,
-              imageUrl: p.imageUrl ?? "",
-              error: p.error,
-              reason: p.reason,
-              canPull: ["scheduled", "draft", "approved"].includes(p.status) && !!p.dueAt && p.dueAt > new Date(),
-            }))}
-          />
-        )}
-      </section>
     </div>
   );
 }

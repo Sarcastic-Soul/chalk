@@ -68,7 +68,7 @@ export function SwipeDeck({ ideas, previewMode }: { ideas: Idea[]; previewMode: 
 
   if (ideas.length === 0) {
     return (
-      <div className="space-y-4">
+      <div className="max-w-xl space-y-4">
         <p className="text-ink-soft">
           Chalk looks at your menu, the next 7 days of weather and local holidays, and suggests one post a day.
           Swipe right to schedule it in Buffer, left to skip.
@@ -84,7 +84,7 @@ export function SwipeDeck({ ideas, previewMode }: { ideas: Idea[]; previewMode: 
 
   if (!idea) {
     return (
-      <div className="space-y-4" aria-live="polite">
+      <div className="max-w-xl space-y-4" aria-live="polite">
         <Notice tone="ok">
           {approved === 0
             ? "You skipped them all. Plan again for new ideas."
@@ -105,14 +105,14 @@ export function SwipeDeck({ ideas, previewMode }: { ideas: Idea[]; previewMode: 
   const tilt = dx / 25;
 
   return (
-    <div className="space-y-5">
+    <div className="max-w-4xl space-y-5">
       <p className="text-sm text-ink-soft" aria-live="polite">
         {index + 1} of {ideas.length}
       </p>
 
       <article
         aria-label={`Idea for ${idea.when}`}
-        className="touch-pan-y select-none overflow-hidden rounded-md border border-line bg-white/60 shadow-sm"
+        className="touch-pan-y select-none overflow-hidden rounded-md border border-line bg-white/60 shadow-sm lg:grid lg:grid-cols-[minmax(0,420px)_1fr]"
         style={{
           transform: `translateX(${dx}px) rotate(${tilt}deg)`,
           transition: dragging ? "none" : "transform 200ms ease-out",
@@ -153,8 +153,8 @@ export function SwipeDeck({ ideas, previewMode }: { ideas: Idea[]; previewMode: 
             </span>
           )}
         </div>
-        <div className="space-y-2 p-4">
-          <p className="font-semibold">{idea.when}</p>
+        <div className="space-y-2 p-4 lg:p-8">
+          <p className="font-semibold lg:font-display lg:text-2xl">{idea.when}</p>
           {idea.reason && <p className="text-sm text-ink-soft">{idea.reason}</p>}
           {editing ? (
             <>
@@ -169,7 +169,7 @@ export function SwipeDeck({ ideas, previewMode }: { ideas: Idea[]; previewMode: 
               />
             </>
           ) : (
-            <p className="whitespace-pre-line text-sm">{caption}</p>
+            <p className="whitespace-pre-line text-sm lg:text-base">{caption}</p>
           )}
           <button
             type="button"
@@ -181,7 +181,7 @@ export function SwipeDeck({ ideas, previewMode }: { ideas: Idea[]; previewMode: 
         </div>
       </article>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 lg:max-w-md">
         <button type="button" className={`${btnSecondary} min-h-14`} onClick={() => choose("skip")} disabled={pending}>
           <XIcon size={20} aria-hidden /> Skip
         </button>
