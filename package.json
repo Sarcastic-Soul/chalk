@@ -3,12 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --experimental-https",
+    "dev": "next dev --experimental-https --experimental-https-key certificates/localhost-key.pem --experimental-https-cert certificates/localhost.pem",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "certs": "mkdir -p certificates && openssl req -x509 -newkey rsa:2048 -nodes -days 30 -keyout certificates/localhost-key.pem -out certificates/localhost.pem -subj /CN=localhost -addext subjectAltName=DNS:localhost,IP:127.0.0.1"
   },
   "dependencies": {
     "@phosphor-icons/react": "2.1.10",
