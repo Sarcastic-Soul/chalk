@@ -196,7 +196,7 @@ function ItemForm({
         </div>
         <div>
           <label htmlFor={`price-${key}`} className={label}>Price</label>
-          <input id={`price-${key}`} value={values.price} onChange={set("price")} className={field} placeholder="₹160" />
+          <input id={`price-${key}`} value={values.price} onChange={set("price")} className={field} placeholder="$5.50" />
         </div>
       </div>
       <div>

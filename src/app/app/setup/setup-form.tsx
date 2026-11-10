@@ -39,7 +39,7 @@ export function SetupForm({
         <form action={demoAction} className="rounded-md border border-line bg-paper-deep p-5 lg:sticky lg:top-12 lg:order-2">
           <p className="font-semibold">Just looking around?</p>
           <p className="mt-1 text-sm text-ink-soft">
-            Load Frozen Cashew, a demo café in Bengaluru with a full menu and photos. Posts stay as Buffer
+            Load Frozen Cashew, a demo café in Melbourne with a full menu and photos. Posts stay as Buffer
             drafts until you turn preview off.
           </p>
           <button type="submit" disabled={demoPending} className={`${btnSecondary} mt-4 w-full`}>

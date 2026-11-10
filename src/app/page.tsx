@@ -69,7 +69,7 @@ export default function Home(props: PageProps<"/">) {
         <p className="font-display text-sm uppercase tracking-[0.2em] opacity-70">Today</p>
         <p className="mt-4 font-display text-4xl italic">Pumpkin loaf</p>
         <p className="mt-1 text-lg opacity-80">warm, with salted butter</p>
-        <p className="mt-8 font-display text-3xl">₹150</p>
+        <p className="mt-8 font-display text-3xl">$5.50</p>
         <p className="mt-1 text-sm opacity-70">until 2pm or sold out</p>
       </figure>
       </div>

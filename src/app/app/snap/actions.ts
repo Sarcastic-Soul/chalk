@@ -59,7 +59,7 @@ export async function draftSpecial(input: z.input<typeof draftInput>): Promise<D
       products: menu.map((p) => `${p.name} ${p.price}`.trim()),
     });
     if (!special.headline.trim()) {
-      return { ok: false, message: "Chalk couldn't tell what the special is. Add a short note like \"pumpkin loaf, ₹150\"." };
+      return { ok: false, message: "Chalk couldn't tell what the special is. Add a short note like \"pumpkin loaf, $5.50\"." };
     }
     const product = menu.find((p) => p.name.toLowerCase() === special.matchedProduct.trim().toLowerCase());
     const price = special.price || product?.price || "";
